@@ -109,6 +109,5 @@ dist
 
 #Project specific files and folders
 src/images/*
-src/reports/*
 !src/images/.gitkeep
 !src/reports/.gitkeep
