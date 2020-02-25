@@ -16,6 +16,8 @@ const MAIL_FILE = "mail.json";
 
 const createProcessReport = () => {
   reports = reports.map(r => {
+    r.schedule = r.schedule || "* * * * * *";
+
     if (!r.recreate) {
       console.log(`Not changed job -> ${r.name} (${r.schedule})`);
       return r;

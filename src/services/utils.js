@@ -9,6 +9,7 @@ const { executeQueryPg } = require("./postgres");
 const { executeQueryOrcl } = require("./oracle");
 
 const REGEX_IMG = /<img\s*src="([^"]+)"\s*data-filename="([^"]+)"\s*data-path="([^"]+)"\s*\/>/;
+const GIT_KEEP = ".gitkeep";
 
 const sendMailReport = async (reportFile, params = {}) =>
   await sendMail({ html: reportFile, ...params }).catch(console.error);
@@ -20,7 +21,7 @@ const readFile = file => fs.readFileSync(file, "utf8");
 
 const fileExists = file => {
   const exists = fs.existsSync(file);
-  if (!exists) console.error(`File not exists: ${report.report}`);
+  if (!exists) console.error(`File not exists: ${file}`);
   return exists;
 };
 
