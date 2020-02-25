@@ -1,0 +1,21 @@
+{
+  "name": "labs-report",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "glob": "^7.1.6",
+    "nodemailer": "^6.4.3",
+    "oracledb": "^4.2.0",
+    "pg": "^7.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "scripts": {
+    "start": "nodemon --inspect=0.0.0.0 src/report.js",
+    "start:prod": "node src/report.js"
+  }
+}

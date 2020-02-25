@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  labs_report:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    command: npm run start:prod
