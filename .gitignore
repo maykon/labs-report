@@ -108,6 +108,5 @@ dist
 .vscode-test
 
 #Project specific files and folders
-src/images/*
 !src/images/.gitkeep
 !src/reports/.gitkeep
