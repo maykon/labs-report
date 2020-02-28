@@ -1,0 +1,15 @@
+{
+    "subject": "Relatório Predize - Pós-Venda",
+    "to": [
+        "Maykon Capellari <maykon.capellari@db1.com.br>"
+    ],
+    "transport": {
+        "host": "smtp.office365.com",
+        "port": 587,
+        "auth": {
+            "user": "maykon.capellari@db1.com.br",
+            "pass": "db1labs@20"
+        }
+    },
+    "pdf": true
+}

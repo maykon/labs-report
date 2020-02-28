@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-let transport = nodemailer.createTransport({
+const configTransport = {
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secureConnection: process.env.SMTP_SECURE,
@@ -11,7 +11,7 @@ let transport = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
   }
-});
+};
 
 const message = {
   from: process.env.MAIL_FROM,
@@ -19,8 +19,16 @@ const message = {
   subject: process.env.MAIL_SUBJECT
 };
 
-async function sendMail(msg) {
-  return await transport.sendMail({ ...message, ...msg });
+const createMailerTransport = config => {
+  return nodemailer.createTransport(
+    config ? { ...configTransport, ...config } : configTransport
+  );
+};
+
+async function sendMail({ transport, ...params }) {
+  const mailerTransport = createMailerTransport(transport);
+  const newMessage = { ...message, ...params };
+  return await mailerTransport.sendMail(newMessage);
 }
 
 module.exports = {
