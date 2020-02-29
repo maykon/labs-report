@@ -1,11 +1,15 @@
 version: "3"
 
 services:
-  labs_report:
-    build: .
+  labs-report:
+    container_name: labs-report
+    build:
+      context: ../..
+      dockerfile: .
+    image: labs-report:latest
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./reports:/home/node/app/reports
+      - ./images:/home/node/app/images
     restart: unless-stopped
     env_file: .env
     environment:

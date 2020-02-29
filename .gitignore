@@ -72,6 +72,8 @@ web_modules/
 # dotenv environment variables file
 .env
 .env.test
+.env.dev
+.env.prod
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -108,7 +110,5 @@ dist
 .vscode-test
 
 #Project specific files and folders
-src/images/*
-src/reports/*
-!src/images/.gitkeep
-!src/reports/.gitkeep
+!images/.gitkeep
+!reports/.gitkeep

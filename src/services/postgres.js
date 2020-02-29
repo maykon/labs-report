@@ -2,18 +2,24 @@ const { Pool } = require("pg");
 
 let pool;
 
-const executeQueryPg = async (sql, params = []) => {
+const createPoolPg = () => {
+  if (pool) return;
   pool = new Pool();
-  const res = await pool.query(sql, params);
-  closePool();
+};
+
+const executeQueryPg = async (sql, params = []) => {
+  createPoolPg();
+  const res = await pool.query(sql, params).catch(console.error);
   return res.rows;
 };
 
-async function closePool() {
-  if (pool) await pool.end();
+function closePoolPg() {
+  if (pool) pool.end(() => {});
+  pool = null;
 }
 
 module.exports = {
+  createPoolPg,
   executeQueryPg,
-  closePool
+  closePoolPg
 };
