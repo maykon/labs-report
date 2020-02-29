@@ -1,7 +1,7 @@
 FROM oraclelinux:7-slim as builder
 
 ARG release=19
-ARG update=6
+ARG update=5
 
 RUN yum -y install oracle-release-el7
 RUN yum-config-manager --enable ol7_oracle_instantclient
@@ -13,7 +13,7 @@ RUN rm -rf *jdbc* *occi* *mysql* *jar
 
 FROM node:12-buster-slim
 
-ENV CRON_PROCESS="*/15 * * * * 1-5"
+ENV CRON_PROCESS="*/15 * * * * *"
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
@@ -21,11 +21,6 @@ ENV NODE_ENV=${NODE_ENV}
 COPY --from=builder /usr/lib/oracle /usr/lib/oracle
 COPY --from=builder /usr/share/oracle /usr/share/oracle
 COPY --from=builder /etc/ld.so.conf.d/oracle-instantclient.conf /etc/ld.so.conf.d/oracle-instantclient.conf
-
-RUN apt-get install -y libfontconfig
-RUN apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade && apt-get install -y libaio1 && \
-    apt-get -y autoremove && apt-get -y clean && \
-    ldconfig
 
 USER node
 RUN mkdir -p /tmp

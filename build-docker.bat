@@ -1,1 +1,1 @@
-call docker build --no-cache . -t labs-report:latest
+call docker build --no-cache . -f .\Dockerfile.builder -t labs-report:latest

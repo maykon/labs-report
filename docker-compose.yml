@@ -5,7 +5,7 @@ services:
     container_name: labs-report
     build:
       context: ../..
-      dockerfile: .
+      dockerfile: ./Dockerfile.builder
     image: labs-report:latest
     #volumes:
     #  - .:/usr/src/app
