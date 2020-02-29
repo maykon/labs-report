@@ -71,7 +71,7 @@ const createCustomReport = reportName => ({
   name: reportName,
   files: [],
   job: null,
-  schedule: "* * * * * *",
+  schedule: "* * * * *",
   report: null,
   recreate: false,
   mail: {},

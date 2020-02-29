@@ -1,0 +1,1 @@
+select day as "Day", value as "Total" from invoicing where invoice_date >= sysdate
