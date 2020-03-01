@@ -52,7 +52,7 @@ const prepareTableReport = (key, query) => {
   let body = query.reduce(
     (acc, row, i) =>
       acc
-        .concat(`<tr class=${getStripedClass(i)}>`)
+        .concat(`<tr class="${getStripedClass(i)}">`)
         .concat(
           Object.values(row)
             .map(v => `<td>${v}</td>`)
