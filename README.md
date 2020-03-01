@@ -1,6 +1,6 @@
 # Labs Report
 
-    This is a simple project that try solve problem about generate enterprise reports among differents products think in a simple way to create and delivery the reports by e-mail.
+This is a simple project that try solve problem about generate enterprise reports among differents products think in a simple way to create and delivery the reports by e-mail.
 
 This was created using the principles of DRY, KISS and CoC. So, instead of many implementations, we can create some files following the conventions and the magic happens.
 I chose to use the system file instead of database, for maintain its simple and easier to configurate and manage the reports.
@@ -45,6 +45,8 @@ When you create one folder, you can put some special files that are used to conf
    | |_ Minutes (0-59)
    |_ Seconds (0-59)[Optional]`
   ```
+
+  - If this file is not created, it is used `* * * * *` pattern that will be executated each 1 minute.
 
 - `mail.json`: In this file, you can change defaults global configuration of email defined in `.env` file.
 
