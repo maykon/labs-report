@@ -38,11 +38,6 @@ const getParentDir = (stats, file) => {
     : path.basename(path.dirname(file));
 };
 
-const getOutputFileReport = file => {
-  let filename = path.basename(path.dirname(file)).concat(".pdf");
-  return [filename, path.resolve(process.env.OUTPUT_DIR, filename)];
-};
-
 const executeQuery = async (baseName, sql) => {
   if (/_pg/.test(baseName)) {
     return await executeQueryPg(sql).catch(console.error);
@@ -123,7 +118,6 @@ const isSameObject = (a, b) =>
 module.exports = {
   fileExists,
   getParentDir,
-  getOutputFileReport,
   sendMailReport,
   createCustomReport,
   createJob,
