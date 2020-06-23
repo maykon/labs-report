@@ -1,8 +1,8 @@
 const CronJob = require("cron").CronJob;
 
-module.exports = (patter, callback, onComplete = null) => {
+module.exports = (pattern, callback, onComplete = null) => {
   const job = new CronJob(
-    patter,
+    pattern,
     callback,
     onComplete,
     true,

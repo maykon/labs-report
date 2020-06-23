@@ -17,16 +17,16 @@ const defaultAttachment = { attachments: [] };
 const sendMailReport = async (reportFile, params = {}) =>
   await sendMail({ html: reportFile, ...params }).catch(console.error);
 
-const getSQLFiles = files =>
-  files.filter(f => path.extname(f).toLowerCase() === ".sql");
+const getSQLFiles = (files) =>
+  files.filter((f) => path.extname(f).toLowerCase() === ".sql");
 
-const readFile = file => fs.readFileSync(file, "utf8");
+const readFile = (file) => fs.readFileSync(file, "utf8");
 
 const writeFile = (path, file) => {
   fs.writeFileSync(path, file);
 };
 
-const fileExists = file => {
+const fileExists = (file) => {
   const exists = fs.existsSync(file);
   if (!exists) console.error(`File not exists: ${file}`);
   return exists;
@@ -52,17 +52,17 @@ const closePool = async () => {
   await closePoolOrcl();
 };
 
-const getReportFiles = async reportDir => {
+const getReportFiles = async (reportDir) => {
   const files = await glob(path.resolve(reportDir, "**"), {}).catch(
     console.error
   );
-  return files.filter(f => path.resolve(f) !== path.resolve(reportDir));
+  return files.filter((f) => path.resolve(f) !== path.resolve(reportDir));
 };
 
 const createJob = (schedule, process, onComplete = null) =>
   createCronJob(schedule, process, onComplete);
 
-const createCustomReport = reportName => ({
+const createCustomReport = (reportName) => ({
   name: reportName,
   files: [],
   job: null,
@@ -70,50 +70,76 @@ const createCustomReport = reportName => ({
   report: null,
   recreate: false,
   mail: {},
-  running: false
+  running: false,
 });
 
 const reduceAttachments = (acc, img) => {
-  let groups = img.match(REGEX_IMG);
-  let basePath = process.env.IMG_DIR;
-  let filename = groups[1];
-  let filePath = path.resolve(basePath, filename);
+  const groups = img.match(REGEX_IMG);
+  const basePath = process.env.IMG_DIR;
+  const filename = groups[1];
+
+  if (acc["attachments"].some((a) => a.filename === filename))
+    return { ...acc };
+  const cid = `cid:${filename}`;
+  const filePath = path.resolve(basePath, filename);
   const exists = fs.existsSync(filePath);
   if (exists) {
-    acc["attachments"].push({
-      cid: `cid:${filename}`,
-      filename,
-      path: filePath
-    });
+    acc["attachments"] = [
+      ...acc["attachments"],
+      {
+        cid,
+        filename,
+        path: filePath,
+      },
+    ];
   }
-  return acc;
+  return { ...acc };
 };
 
-const addCIDInImages = file => {
+const addCIDInImages = (file) => {
   if (!REGEX_IMG.test(file)) return file;
-  let images = file.match(new RegExp(REGEX_IMG, "g"));
+  const images = file.match(new RegExp(REGEX_IMG, "g"));
   for (let img of images) {
     const matched = img.match(REGEX_IMG);
     const searchText = img;
-    const replaceText = img.replace(matched[1], `cid:${matched[1]}`);
+    const cid = `cid:${matched[1]}`;
+    const replaceText = img.replace(matched[1], cid);
     file = file.replace(searchText, replaceText);
   }
   return file;
 };
 
-const getAttachments = file => {
+const getAttachments = (file) => {
   if (!REGEX_IMG.test(file)) return {};
-  let attached = file.match(new RegExp(REGEX_IMG, "g"));
-  return attached.reduce(reduceAttachments, defaultAttachment);
+  const attached = file.match(new RegExp(REGEX_IMG, "g"));
+  return attached.reduce(reduceAttachments, {
+    ...defaultAttachment,
+  });
 };
 
 const isSameObject = (a, b) =>
-  Object.entries(a)
-    .sort()
-    .toString() ===
-  Object.entries(b)
-    .sort()
-    .toString();
+  Object.entries(a).sort().toString() === Object.entries(b).sort().toString();
+
+const closePoolInactives = (reports) => {
+  let allInactive = reports.every((r) => !r.running);
+  if (allInactive) {
+    closePool();
+  }
+};
+
+const addCustomPropsReport = (job, prop, file, read = true) => {
+  let oldValue = job[prop];
+  job[prop] = read ? readFile(file) : file;
+  if (oldValue !== job[prop]) job.recreate = prop;
+  return job;
+};
+
+const addJsonParsedPropsReport = (job, prop, file) => {
+  let oldValue = job[prop];
+  job[prop] = JSON.parse(readFile(file));
+  if (!isSameObject(oldValue, job[prop])) job.recreate = prop;
+  return job;
+};
 
 module.exports = {
   fileExists,
@@ -129,5 +155,8 @@ module.exports = {
   closePool,
   getAttachments,
   addCIDInImages,
-  isSameObject
+  isSameObject,
+  closePoolInactives,
+  addCustomPropsReport,
+  addJsonParsedPropsReport,
 };

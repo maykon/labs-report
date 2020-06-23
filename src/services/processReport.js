@@ -6,13 +6,13 @@ const {
   executeQuery,
   sendMailReport,
   getAttachments,
-  addCIDInImages
+  addCIDInImages,
 } = require("./utils");
 const { prepareReportFile, prepareHtmlFile } = require("./prepareReport");
 
 const SQL_EXT = ".sql";
 
-const executeQuerysReport = async report => {
+const executeQuerysReport = async (report) => {
   console.log(`\tExecuting querys from job name -> ${report.name}`);
   let querys = {};
   const sqlFiles = getSQLFiles(report.files);
@@ -47,10 +47,10 @@ module.exports = async (reports, report, index) => {
     reportFile = addCIDInImages(reportFile);
     const mailParams = { ...reportAttachments, ...report.mail };
 
-    console.log(`\tSending email job name -> ${report.name}`);
+    console.log(`\tSending e-mail job name -> ${report.name}`);
     let info = await sendMailReport(reportFile, mailParams);
     if (info.rejected.length > 0)
-      throw new Error(`Envio do relatório "${report.name}" foi rejeitado.`);
+      throw new Error(`E-mail rejected -> "${report.name}".`);
   } finally {
     reports[index].running = false;
     console.log(`\tFinished job name -> ${report.name}\n`);

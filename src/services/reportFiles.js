@@ -6,9 +6,9 @@ const {
   getParentDir,
   createCustomReport,
   createJob,
-  readFile,
-  isSameObject,
-  closePool
+  closePoolInactives,
+  addCustomPropsReport,
+  addJsonParsedPropsReport
 } = require("./utils");
 
 let reports = [];
@@ -39,20 +39,6 @@ const createProcessReport = () => {
     r.job = createJob(r.schedule, () => processReport(reports, r, i));
     return r;
   });
-};
-
-const addCustomPropsReport = (job, prop, file, read = true) => {
-  let oldValue = job[prop];
-  job[prop] = read ? readFile(file) : file;
-  if (oldValue !== job[prop]) job.recreate = prop;
-  return job;
-};
-
-const addJsonParsedPropsReport = (job, prop, file) => {
-  let oldValue = job[prop];
-  job[prop] = JSON.parse(readFile(file));
-  if (!isSameObject(oldValue, job[prop])) job.recreate = prop;
-  return job;
 };
 
 const updateJob = (job, stats, parentDir, file) => {
@@ -92,13 +78,6 @@ const addReportProcess = file => {
   }
 };
 
-const closePoolInactives = () => {
-  let allInactive = reports.every(r => !r.running);
-  if (allInactive) {
-    closePool();
-  }
-};
-
 const processFiles = async () => {
   const reportDir = process.env.REPORT_DIR.toLowerCase();
 
@@ -108,7 +87,7 @@ const processFiles = async () => {
     addReportProcess(file);
   }
   createProcessReport();
-  closePoolInactives();
+  closePoolInactives(reports);
 };
 
 module.exports = () => {
