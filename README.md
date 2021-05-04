@@ -70,6 +70,23 @@ When you create one folder, you can put some special files that are used to conf
     }
   ```
 
+- `db.json`: In this file, you can change defaults global configuration of database connection defined in `.env` file.
+
+  - Example: You can change all database configs or only one.
+
+  ```
+    {
+      "pg": {
+        "connectionString": "postgresql://postgres:postgres@localhost:5432/postgres"
+      },
+      "orcl": {
+        "user": "oracle",
+        "password": "oracle",
+        "connectString": "localhost:1521/orcl"
+      }
+    }
+  ```
+
 - Files `.sql`: Here, you can put all the sql files that you will use in the report.
 
   - By default, the files must have only one SQL query, in addition to having a specific name that will inform the report manager which database driver to use.
@@ -78,6 +95,7 @@ When you create one folder, you can put some special files that are used to conf
     - `table`: display the results of query in tabular form.
     - `list`: display the results of query in a list form (only the first column).
     - `text`: display the results of query as text (only the first column).
+    - `nop`: no process and display results (used to set operations).
   - Plus de database driver name.
 
     - `pg`: Execute the query using Postgres connection configured in `.env` file.
@@ -87,6 +105,7 @@ When you create one folder, you can put some special files that are used to conf
       - query_table_pg.sql
       - report_xyz_list_orcl.sql
       - count_text_pg.sql
+      - list_messages_nop_pg.sql
 
 - `report.html`: Here the report to be sent must be defined.
 
@@ -101,5 +120,12 @@ When you create one folder, you can put some special files that are used to conf
       - `#(QUERY_TABLE_PG)`
       - `#(REPORT_XYZ_LIST_ORCL)`
       - `#(COUNT_TEXT_PG)`
+
+  - Now is possible execute two SQLs and perform set operations on this querys.
+
+    - Examples set operations:
+      - `#(DIFERENCE(messages_core_nop_orcl, messages_base_nop_pg, message_id))`
+      - `#(UNION(messages_core_nop_orcl, messages_base_nop_pg, message_id))`
+      - `#(INTERSECTION(messages_core_nop_orcl, messages_base_nop_pg, message_id))`
 
   - To add images in report, put the file inside the image folder configurated in `IMG_DIR` env variable and add the tag `<img src="myfilename.png">` (the path must not be configured).

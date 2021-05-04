@@ -8,13 +8,14 @@ const {
   createJob,
   closePoolInactives,
   addCustomPropsReport,
-  addJsonParsedPropsReport
+  addJsonParsedPropsReport,
 } = require("./utils");
 
 let reports = [];
 const CRON_FILE = "cron";
 const REPORT_FILE = "report.html";
 const MAIL_FILE = "mail.json";
+const DB_FILE = "db.json";
 
 const createProcessReport = () => {
   reports = reports.map((r, i) => {
@@ -47,6 +48,9 @@ const updateJob = (job, stats, parentDir, file) => {
 
   if (stats.isFile()) {
     switch (basename) {
+      case DB_FILE:
+        job = addJsonParsedPropsReport(job, "db", file);
+        break;
       case MAIL_FILE:
         job = addJsonParsedPropsReport(job, "mail", file);
         break;
@@ -57,19 +61,19 @@ const updateJob = (job, stats, parentDir, file) => {
         job = addCustomPropsReport(job, "report", file, false);
         break;
       default:
-        if (!job.files.some(f => f === file)) {
+        if (!job.files.some((f) => f === file)) {
           job.recreate = file;
           job.files = [...job.files, file];
         }
     }
-    reports = reports.map(r => (r.name === parentDir ? job : r));
+    reports = reports.map((r) => (r.name === parentDir ? job : r));
   }
 };
 
-const addReportProcess = file => {
+const addReportProcess = (file) => {
   const stats = fs.statSync(file);
   const parentDir = getParentDir(stats, file);
-  const job = reports.find(j => j.name === parentDir);
+  const job = reports.find((j) => j.name === parentDir);
   if (job) {
     updateJob(job, stats, parentDir, file);
   } else {

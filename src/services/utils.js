@@ -38,11 +38,11 @@ const getParentDir = (stats, file) => {
     : path.basename(path.dirname(file));
 };
 
-const executeQuery = async (baseName, sql) => {
+const executeQuery = async (baseName, sql, config = {}) => {
   if (/_pg/.test(baseName)) {
-    return await executeQueryPg(sql).catch(console.error);
+    return await executeQueryPg(sql, [], config["pg"]);
   } else if (/_orcl/.test(baseName)) {
-    return await executeQueryOrcl(sql).catch(console.error);
+    return await executeQueryOrcl(sql, [], config["orcl"]);
   }
   return {};
 };
@@ -135,7 +135,7 @@ const addCustomPropsReport = (job, prop, file, read = true) => {
 };
 
 const addJsonParsedPropsReport = (job, prop, file) => {
-  let oldValue = job[prop];
+  let oldValue = job[prop] || {};
   job[prop] = JSON.parse(readFile(file));
   if (!isSameObject(oldValue, job[prop])) job.recreate = prop;
   return job;

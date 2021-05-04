@@ -12,7 +12,7 @@ const { prepareReportFile, prepareHtmlFile } = require("./prepareReport");
 
 const SQL_EXT = ".sql";
 
-const executeQuerysReport = async (report) => {
+const executeQuerysReport = async (report, config) => {
   console.log(`\tExecuting querys from job name -> ${report.name}`);
   let querys = {};
   const sqlFiles = getSQLFiles(report.files);
@@ -21,7 +21,7 @@ const executeQuerysReport = async (report) => {
       try {
         const baseName = path.basename(file, SQL_EXT);
         const fileContent = readFile(file);
-        querys[baseName] = await executeQuery(baseName, fileContent);
+        querys[baseName] = await executeQuery(baseName, fileContent, config);
       } catch (err) {
         console.error(err);
       }
@@ -38,7 +38,7 @@ module.exports = async (reports, report, index) => {
     if (!fileExists(report.report)) return;
 
     let reportFile = readFile(report.report);
-    let querys = await executeQuerysReport(report);
+    let querys = await executeQuerysReport(report, report.db);
 
     console.log(`\tPreparing data from job name -> ${report.name}`);
     reportFile = prepareReportFile(querys, reportFile);
